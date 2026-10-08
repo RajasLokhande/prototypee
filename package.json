@@ -14,7 +14,7 @@
     "test": "cd backend && npm test",
     "test:security": "node backend/tests/security.test.js",
     "test:regression": "node backend/tests/regression.test.js",
-    "build": "cd frontend && npm run build",
+    "build": "npm run setup && cd frontend && npm run build",
     "start": "npm run seed && cd backend && npm start"
   },
   "keywords": ["security", "idor", "bola", "ai", "repair"],
