@@ -1,4 +1,4 @@
-# AI-Assisted IDOR/BOLA Repair System
+# SafePatch AI
 
 An automated security vulnerability detection and repair system for a document portal, built as a college project prototype.
 

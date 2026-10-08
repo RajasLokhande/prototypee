@@ -1,7 +1,7 @@
 {
   "name": "idor-repair-system",
   "version": "1.0.0",
-  "description": "AI-Assisted IDOR/BOLA Repair System for Document Portal",
+  "description": "SafePatch AI for Document Portal",
   "type": "module",
   "scripts": {
     "setup": "npm run setup:backend && npm run setup:frontend",

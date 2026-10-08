@@ -153,7 +153,7 @@ function Dashboard({ user, token }) {
       <div className="container">
         <div className="dashboard-header">
           <h1>Security <span className="fw-400">Dashboard</span></h1>
-          <p className="subtitle">AI-Assisted IDOR/BOLA Detection and Repair</p>
+          <p className="subtitle">SafePatch AI Detection and Repair</p>
         </div>
 
         {/* 1. System Status */}

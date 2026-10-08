@@ -8,7 +8,7 @@ function Header({ user, onLogout }) {
     <header className="header">
       <div className="header-container">
         <div className="header-left">
-          <h1 className="header-logo">IDOR Repair System</h1>
+          <h1 className="header-logo">SafePatch AI</h1>
         </div>
         
         <nav className="header-nav">

@@ -48,7 +48,7 @@ function Login({ onLogin }) {
     <div className="login-page">
       <div className="login-container">
         <div className="login-header">
-          <h1>IDOR Repair System</h1>
+          <h1>SafePatch AI</h1>
           <p className="subtitle">AI-Assisted Security Vulnerability Detection & Repair</p>
         </div>
 

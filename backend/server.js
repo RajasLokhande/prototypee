@@ -41,7 +41,7 @@ app.use(express.static(path.join(__dirname, '../frontend/dist')));
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'healthy',
-    message: 'IDOR Repair System API is running',
+    message: 'SafePatch AI API is running',
     timestamp: new Date().toISOString()
   });
 });
