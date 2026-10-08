@@ -1,0 +1,26 @@
+{
+  "name": "idor-repair-system",
+  "version": "1.0.0",
+  "description": "AI-Assisted IDOR/BOLA Repair System for Document Portal",
+  "type": "module",
+  "scripts": {
+    "setup": "npm run setup:backend && npm run setup:frontend",
+    "setup:backend": "cd backend && npm install",
+    "setup:frontend": "cd frontend && npm install",
+    "seed": "node backend/scripts/seed.js",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "test": "cd backend && npm test",
+    "test:security": "node backend/tests/security.test.js",
+    "test:regression": "node backend/tests/regression.test.js",
+    "build": "cd frontend && npm run build",
+    "start": "npm run seed && cd backend && npm start"
+  },
+  "keywords": ["security", "idor", "bola", "ai", "repair"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -1,0 +1,691 @@
+Act as a senior full-stack engineer, application-security engineer, and software architect.
+
+I need you to BUILD a working prototype for the following college project:
+
+# PROJECT
+AI-Assisted IDOR/BOLA Repair System for a Document Portal
+
+# PROBLEM STATEMENT
+
+Build an AI-assisted system that tracks down an access flaw in a document portal and fixes it safely:
+
+**Proof first → smallest fix → verify nothing else broke.**
+
+The document portal is a web application where users upload, store, list, open, and download documents.
+
+The portal intentionally contains an **IDOR / BOLA (Broken Object Level Authorization)** vulnerability where an authenticated user can access another user's document by changing the document ID in the API request.
+
+The prototype must automatically:
+
+1. Detect the suspected authorization flaw.
+2. Produce concrete proof that the flaw exists.
+3. Analyze the relevant source code using AI.
+4. Generate the smallest possible code patch.
+5. Apply the patch only inside a safe sandbox/workspace.
+6. Run security tests and functional regression tests.
+7. Show whether the repair succeeded without breaking legitimate functionality.
+8. Present the complete process in a simple web dashboard.
+
+IMPORTANT:
+This is a LOCAL DEMONSTRATION ONLY.
+Do not scan, attack, or interact with real websites or third-party systems.
+The intentionally vulnerable document portal must run locally.
+
+---
+
+# CORE DEMO SCENARIO
+
+Create two users:
+
+Alice
+- user_id = 1
+
+Bob
+- user_id = 2
+
+Create documents such as:
+
+Alice:
+- document 101
+- document 102
+
+Bob:
+- document 201
+- document 202
+
+The vulnerable endpoint should look conceptually like:
+
+GET /api/documents/:id
+
+The vulnerable implementation should:
+- authenticate the user
+- retrieve the requested document
+- return it
+
+BUT it must initially fail to verify whether the authenticated user is authorized to access that document.
+
+Example:
+
+Alice is authenticated.
+
+Alice requests:
+
+GET /api/documents/201
+
+Document 201 belongs to Bob.
+
+The vulnerable application incorrectly returns:
+
+200 OK
+
+This is the vulnerability.
+
+After repair, the same request must return:
+
+403 Forbidden
+
+while legitimate access must continue working.
+
+---
+
+# REQUIRED TECHNOLOGY
+
+Use a simple stack that is easy for a college team to understand and run.
+
+Preferred:
+
+Frontend:
+- React
+- Vite
+
+Backend:
+- Node.js
+- Express
+
+Database:
+- SQLite
+
+Authentication:
+- JWT or a very simple local authentication mechanism
+
+Testing:
+- Jest + Supertest OR Vitest + Supertest
+
+Version control / patch:
+- Git-style diff/patch format
+
+AI:
+- Anthropic Claude API if an API key is available
+
+The system must still be runnable without an API key.
+If no API key is present, implement a deterministic fallback/mock AI analyzer so the entire demo can still be demonstrated.
+
+Do NOT introduce unnecessary infrastructure such as Kubernetes, Docker clusters, microservices, Redis, Kafka, etc.
+
+Keep it small and understandable.
+
+---
+
+# HIGH-LEVEL ARCHITECTURE
+
+Build these logical components:
+
+1. DOCUMENT PORTAL
+   - authentication
+   - document upload
+   - document listing
+   - document opening/downloading
+   - deliberately vulnerable document access endpoint
+
+2. SECURITY SCANNER
+   - logs in as a test user
+   - discovers/candidates document IDs
+   - attempts cross-user document access
+   - compares document ownership with authenticated user
+   - identifies suspicious 200 responses
+   - creates a structured vulnerability finding
+
+3. PROOF GENERATOR
+   Generate a clear proof record containing:
+   - authenticated user
+   - authenticated user ID
+   - requested document ID
+   - document owner ID
+   - expected HTTP status
+   - actual HTTP status
+   - endpoint
+   - timestamp
+   - safe evidence / canary marker
+   - vulnerability classification
+   - reason why the access is unauthorized
+
+Use a harmless canary document or marker instead of exposing sensitive content.
+
+Example proof:
+
+Vulnerability:
+Broken Object Level Authorization
+
+User:
+Alice (1)
+
+Requested document:
+201
+
+Owner:
+Bob (2)
+
+Expected:
+403 Forbidden
+
+Actual:
+200 OK
+
+Result:
+CONFIRMED
+
+4. AI ANALYZER
+   Give the AI:
+   - vulnerability evidence
+   - proof record
+   - relevant source code
+   - application authorization rules
+   - patch constraints
+
+The AI should determine:
+   - root cause
+   - affected file/function
+   - why authorization is missing
+   - safest minimal repair
+
+5. PATCH GENERATOR
+   The AI must generate a MINIMAL PATCH / DIFF.
+
+Do not rewrite the entire project.
+
+Prefer output like:
+
+- added authorization check
+- no unnecessary refactoring
+- no database schema changes unless absolutely necessary
+- preserve legitimate document sharing behavior if sharing exists
+
+The patch should be machine-readable and human-readable.
+
+Show:
+   - files changed
+   - lines added
+   - lines removed
+   - diff
+
+6. SAFE PATCH SANDBOX
+   Never directly modify the original vulnerable source during analysis.
+
+Instead:
+   - create a temporary/sandbox copy
+   - apply the patch there
+   - run tests there
+
+Only mark the patch as accepted if verification succeeds.
+
+7. VERIFICATION ENGINE
+
+Run at least:
+
+SECURITY TESTS
+A. Owner can access own document
+B. Non-owner cannot access another user's document
+C. Bob cannot access Alice's private document
+D. Unknown document returns appropriate error
+E. Shared document remains accessible if your implementation includes document sharing
+
+REGRESSION / FUNCTIONAL TESTS
+F. User login works
+G. Document listing works
+H. Document upload works
+I. Owner can open/download own document
+J. Document deletion still works if implemented
+
+The critical security test must initially FAIL on the vulnerable code and PASS after the repair.
+
+Example:
+
+BEFORE PATCH
+Alice → Bob's document
+Expected: 403
+Actual: 200
+FAIL
+
+AFTER PATCH
+Alice → Bob's document
+Expected: 403
+Actual: 403
+PASS
+
+All legitimate functionality must remain PASS.
+
+---
+
+# IMPORTANT DESIGN PRINCIPLE
+
+The system must follow:
+
+DETECT
+↓
+PROVE
+↓
+ANALYZE
+↓
+GENERATE MINIMAL PATCH
+↓
+APPLY IN SANDBOX
+↓
+RUN TESTS
+↓
+VERIFY
+↓
+ACCEPT / REJECT
+
+Do not let the AI simply say:
+"the vulnerability is fixed."
+
+The automated tests must provide the final verification.
+
+Use this principle:
+
+**AI proposes. Automated evidence verifies.**
+
+---
+
+# UI / DASHBOARD
+
+Create a clean React dashboard specifically designed for a project demonstration.
+
+The dashboard should have these sections:
+
+## 1. System Status
+
+Show:
+
+Portal:
+Running
+
+Scanner:
+Ready
+
+AI Analyzer:
+Available / Mock Mode
+
+Test Environment:
+Ready
+
+## 2. Scan
+
+Button:
+
+[ Run Security Scan ]
+
+Show scan progress.
+
+Example:
+
+Scanning document endpoints...
+Testing cross-user access...
+Analyzing authorization behavior...
+
+## 3. Vulnerability Result
+
+Display a prominent security finding:
+
+CRITICAL / HIGH
+Broken Object Level Authorization
+
+Then show:
+
+Attacker/User: Alice
+Target Object: Document 201
+Owner: Bob
+
+Expected: 403 Forbidden
+Actual: 200 OK
+
+Status:
+🚨 Confirmed Unauthorized Access
+
+## 4. Proof
+
+Show the reproducible request and result in a developer-friendly format.
+
+Example:
+
+GET /api/documents/201
+Authenticated as: Alice
+
+Response:
+HTTP 200
+
+Reason:
+Document owner = Bob
+Requester = Alice
+
+Evidence:
+CANARY_DOCUMENT_201
+
+## 5. AI Analysis
+
+Show:
+
+Root Cause:
+The endpoint authenticates the requester but does not perform object-level authorization before returning the document.
+
+Affected File:
+server/routes/documents.js
+
+Affected Function:
+GET /api/documents/:id
+
+Confidence:
+High
+
+## 6. Proposed Minimal Fix
+
+Display a syntax-highlighted diff.
+
+Example:
+
+- existing code
+
++ authorization check
+
+Make the patch visually obvious.
+
+Show a small summary:
+
+Files changed: 1
+Lines added: 4
+Lines removed: 0
+
+Buttons:
+
+[ Apply Patch ]
+[ Reject Patch ]
+
+## 7. Verification
+
+After applying the patch, automatically run tests.
+
+Show something similar to:
+
+SECURITY TESTS
+✅ Owner access
+✅ Unauthorized access blocked
+✅ Bob protected from Alice
+✅ Invalid document handling
+
+REGRESSION TESTS
+✅ Login
+✅ Upload
+✅ List documents
+✅ Download
+✅ Delete
+
+Final result:
+
+✅ REPAIR VERIFIED
+
+OR
+
+❌ REPAIR REJECTED
+Reason: regression detected
+
+---
+
+# DOCUMENT PORTAL UI
+
+Create a simple but functional document portal.
+
+Pages/components:
+
+- Login
+- Dashboard
+- My Documents
+- Upload Document
+- Document Viewer/Download
+
+Make the UI sufficient for the demonstration but do not spend excessive time on visual design.
+
+Use sample documents and sample users.
+
+---
+
+# SECURITY SCANNER DETAILS
+
+Implement a local scanner module.
+
+It should be able to:
+
+1. Authenticate as Alice.
+2. Obtain Alice's document list.
+3. Identify candidate document IDs.
+4. Attempt access to another user's document.
+5. Compare:
+   requester user ID
+   document owner ID
+   HTTP response
+6. Confirm BOLA/IDOR when:
+   requester != owner
+   AND
+   server returns unauthorized success.
+
+Do not claim a vulnerability solely because a request returns 200.
+Use ownership information and controlled proof evidence.
+
+Structure the scanner output as JSON.
+
+Example:
+
+{
+  "vulnerability": "BOLA",
+  "confirmed": true,
+  "requester": {
+    "id": 1,
+    "name": "Alice"
+  },
+  "targetDocument": {
+    "id": 201,
+    "ownerId": 2
+  },
+  "expectedStatus": 403,
+  "actualStatus": 200,
+  "endpoint": "/api/documents/201",
+  "evidence": "CANARY_DOCUMENT_201"
+}
+
+---
+
+# AI IMPLEMENTATION
+
+Create an AI service abstraction such as:
+
+ai/analyzer.js
+
+It should support:
+
+1. Real Claude API mode
+2. Local fallback/mock mode
+
+The real AI prompt should include:
+- vulnerability type
+- proof
+- source code
+- expected authorization policy
+- constraints
+
+Ask Claude to return structured JSON:
+
+{
+  "vulnerability": "...",
+  "rootCause": "...",
+  "affectedFile": "...",
+  "affectedFunction": "...",
+  "explanation": "...",
+  "patch": "...",
+  "testsToRun": [...]
+}
+
+The patch must be minimal.
+
+Reject dangerous or unrelated changes.
+
+---
+
+# PATCH SAFETY
+
+Implement basic safety rules:
+
+- Only allow patches to whitelisted project files.
+- Reject changes to package-lock/package.json unless explicitly necessary.
+- Reject database schema changes for this prototype.
+- Reject patches touching files outside the application workspace.
+- Run the patch inside a temporary sandbox.
+- Run tests before accepting the patch.
+- Preserve the original vulnerable project so the demo can reset it.
+
+Add:
+
+[Reset Vulnerable Version]
+
+so the demonstration can be repeated.
+
+---
+
+# PROJECT STRUCTURE
+
+Use a clear structure such as:
+
+/portal
+  /server
+  /routes
+  /middleware
+  /database
+  /documents
+
+/scanner
+
+/proof-engine
+
+/ai-agent
+
+/patch-engine
+
+/verification
+
+/dashboard
+
+/tests
+
+Include a README explaining everything.
+
+---
+
+# DEMONSTRATION FLOW
+
+The finished project must support this exact demo:
+
+1. Start application.
+2. Login as Alice.
+3. Show that Alice can access her own documents.
+4. Run Security Scan.
+5. Scanner discovers that Alice can access Bob's document.
+6. Dashboard shows proof of BOLA/IDOR.
+7. Send evidence + vulnerable code to Claude.
+8. Claude identifies missing object-level authorization.
+9. Claude produces a minimal patch.
+10. Show the diff.
+11. Apply patch to sandbox.
+12. Run security tests.
+13. Run regression tests.
+14. Show unauthorized access now returns 403.
+15. Show legitimate functionality still works.
+16. Mark repair as VERIFIED.
+
+The entire workflow should take only a few minutes in a live demonstration.
+
+---
+
+# WHAT I WANT YOU TO DELIVER
+
+Do not just give me snippets.
+
+Build the actual prototype.
+
+I want:
+
+1. Complete project structure
+2. Backend code
+3. Frontend code
+4. SQLite database setup
+5. Sample users/documents
+6. Deliberately vulnerable BOLA implementation
+7. Security scanner
+8. Proof generation
+9. Claude/LLM integration
+10. Fallback mock AI
+11. Minimal patch generation
+12. Sandbox patch application
+13. Security tests
+14. Regression tests
+15. React dashboard
+16. Reset-to-vulnerable functionality
+17. README with setup instructions
+18. .env.example
+19. Seed script
+20. Commands to run everything
+
+---
+
+# DEVELOPMENT REQUIREMENTS
+
+Keep the code:
+- readable
+- modular
+- beginner-friendly
+- well-commented
+- easy to demo
+
+Prefer simple implementations over enterprise complexity.
+
+Do not over-engineer.
+
+Do not use external websites as scan targets.
+
+All testing must happen against the local intentionally vulnerable application.
+
+---
+
+# IMPORTANT
+
+The project must begin in a deliberately vulnerable state so that the scanner has something real to detect.
+
+The vulnerability must be genuine and reproducible.
+
+The system must be able to demonstrate:
+
+BEFORE
+Alice → Bob document → 200 OK → security failure
+
+AFTER
+Alice → Bob document → 403 Forbidden → security PASS
+
+while:
+
+Alice → Alice document → 200 OK → functional PASS
+
+Finally, explain how every major module maps to the original problem statement:
+
+"tracks down the flaw"
+"proof first"
+"smallest fix"
+"checks that nothing else broke"
+
+Start by creating the complete project and then explain how to run it locally.
