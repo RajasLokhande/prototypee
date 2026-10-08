@@ -9,10 +9,10 @@ async function seed() {
 
   try {
     // Clear existing data
+    db.prepare('DELETE FROM patches').run();
+    db.prepare('DELETE FROM vulnerabilities').run();
     db.prepare('DELETE FROM documents').run();
     db.prepare('DELETE FROM users').run();
-    db.prepare('DELETE FROM vulnerabilities').run();
-    db.prepare('DELETE FROM patches').run();
 
     console.log('🧹 Cleared existing data');
 
