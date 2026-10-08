@@ -230,18 +230,7 @@ function Dashboard({ user, token }) {
           </section>
         )}
 
-        {/* 7. Reset */}
-        <section className="section-gap">
-          <div className="card reset-card">
-            <div className="reset-content">
-              <div>
-                <h3>Reset System</h3>
-                <p className="reset-desc">Restore the system to its original vulnerable state for re-demonstration.</p>
-              </div>
-              <button onClick={reset} className="btn btn-outline">🔄 Reset to Vulnerable Version</button>
-            </div>
-          </div>
-        </section>
+
       </div>
     </div>
   );
